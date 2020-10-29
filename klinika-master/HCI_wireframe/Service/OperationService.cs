@@ -57,7 +57,7 @@ namespace Class_diagram.Service
             Boolean hasAppointmentPatient = patientController.doesPatientHaveAnAppointmentAtSpecificPeriod(start, end,dateToString, patient);
             Boolean hasOperationPatient = patientController.doesPatientHaveAnOperationAtSpecificPeriod(start,end,dateToString, patient);
             
-            if (hasAppointmentDoctor == true || hasAppointmentPatient == true || hasOperationDoctor == true || hasOperationPatient == true)
+            if (hasAppointmentDoctor || hasAppointmentPatient || hasOperationDoctor || hasOperationPatient)
             {
                 return true;
             }

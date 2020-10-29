@@ -11,13 +11,18 @@ using HCI_wireframe.Model.Employee;
 using HCI_wireframe.Service;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
+using Xceed.Wpf.Toolkit;
 
 namespace Class_diagram.Service
 {
    public class ManagerService : AbstractUserService<ManagerUser>
     {
         public ManagerRepository managerRepository;
+        public const int UPDATE_MANAGER = 0;
+        public const int NEW_MANAGER = 1;
+
         String path = bingPathToAppDir(@"JsonFiles\manager.json");
 
         public ManagerService()
@@ -34,25 +39,35 @@ namespace Class_diagram.Service
             return managerRepository.GetAll();
         }
 
-        public override Boolean New(ManagerUser manager)
+        private bool createManagerIfDateIsValid(ManagerUser manager)
         {
-            if (isDataValid(manager.Email,manager.UniqueCitizensIdentityNumber,manager) && isCityValid(manager.city))
+            if (isDataValid(manager.Email, manager.UniqueCitizensIdentityNumber, manager) && isCityValid(manager.city))
             {
                 managerRepository.New(manager);
                 return true;
             }
             return false;
-            
+        }
+        
+
+        public override Boolean New(ManagerUser manager)
+        {
+            return createManagerIfDateIsValid(manager);
         }
 
-        public override bool Update(ManagerUser manager)
+        private bool updateManagerIfDataIsValid(ManagerUser manager)
         {
-            if (isDataValid(manager.Email, manager.UniqueCitizensIdentityNumber,manager) && isCityValid(manager.city))
+            if (isDataValid(manager.Email, manager.UniqueCitizensIdentityNumber, manager) && isCityValid(manager.city))
             {
                 managerRepository.Update(manager);
                 return true;
             }
             return false;
+        }
+
+        public override bool Update(ManagerUser manager)
+        {
+            return updateManagerIfDataIsValid(manager);
         }
 
         public override ManagerUser GetByID(int ID)
