@@ -53,20 +53,19 @@ namespace Class_diagram.Service
         public DoctorAppointment RecommendAnAppointment(DoctorUser doctor, DateTime date1, DateTime date2, PatientUser patient)
         {
             TimeSpan time1 = TimeSpan.FromMinutes(15);
-
             var date = date1;
             while (date <= date2)
             {
                 DoctorAppointment foundAppointment = getAvailableTerm(doctor, date, time1, patient);
-                if (foundAppointment!=null)
+                if (foundAppointment != null)
                 {
                     return foundAppointment;
                 }
                 date = date.AddDays(1);
             }
-
             return null;
         }
+
 
         private DoctorAppointment getAvailableTerm(DoctorUser doctor, DateTime date, TimeSpan time1, PatientUser patient)
         {
@@ -109,29 +108,18 @@ namespace Class_diagram.Service
             DoctorController doctorController = new DoctorController();
             List<DoctorUser> doctorsList = doctorController.GetAll();
 
-            TimeSpan time1 = TimeSpan.FromMinutes(15);
-
-            var date = date1;
-            while (date <= date2)
+            foreach (DoctorUser doctor in doctorsList)
             {
-                foreach (DoctorUser doctor in doctorsList)
+                if (doctor.Specialist == false && RecommendAnAppointment(doctor,date1, date2, patient) != null)
                 {
-                    if (doctor.Specialist == false)
-                    {
-                        DoctorAppointment foundAppointment = getAvailableTerm(doctor, date, time1, patient);
-                        if (foundAppointment != null)
-                        {
-                            return foundAppointment;
-                        }
-                    }
+                    return RecommendAnAppointment(doctor,date1, date2,patient);
                 }
-                date = date.AddDays(1);
             }
-
             return null;
         }
 
-      
+
+
         public Boolean isTermNotAvailable(DoctorUser doctor, TimeSpan time, String dateToString, PatientUser patient)
         {
             PatientController patientController = new PatientController();
