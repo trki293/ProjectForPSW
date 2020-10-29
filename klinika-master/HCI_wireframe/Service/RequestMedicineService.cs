@@ -23,8 +23,31 @@ namespace HCI_wireframe.Service
             medicineRepository = new RequestMedicineRepository(path);
             roomRepository = new RoomRepository(path2);
         }
-    
-        public void New(Medicine medicine)
+
+        private Boolean isRoomStorage(Room room)
+        {
+            if(room.TypeOfRoom.Equals("Magacin"))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private void addMedicineIfRoomIsStorage(Medicine medicine, Room room)
+        {
+            if (isRoomStorage(room))
+            {
+                //dodat update za medicine repo
+                medicine.room.Add(room.TypeOfRoom);
+                medicineRepository.Update(medicine);
+
+                room.medicine.Add(medicine.Name);
+                roomRepository.Update(room);
+                
+            }
+        }
+
+        private void addMedicineToStorages(Medicine medicine)
         {
             List<Room> listOfRooms = new List<Room>();
             listOfRooms = roomRepository.GetAll();
@@ -32,16 +55,19 @@ namespace HCI_wireframe.Service
 
             foreach (Room room in listOfRooms)
             {
-                if (room.TypeOfRoom.Equals("Magacin"))
-                {
-                    medicine.room.Add(room.TypeOfRoom);
-                    room.medicine.Add(medicine.Name);
-                    roomRepository.Update(room);
-                }
-            }
 
+                addMedicineIfRoomIsStorage(medicine, room);
+
+
+            }
+        }
+    
+        public void New(Medicine medicine)
+        {
+            addMedicineToStorage(medicine);
             medicineRepository.New(medicine);
         }
+
         public void Update(Medicine medicine)
         {
             medicineRepository.Update(medicine);
