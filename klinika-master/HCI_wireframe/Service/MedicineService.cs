@@ -13,10 +13,11 @@ using HCI_wireframe.Service;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Media.Animation;
 
 namespace Class_diagram.Service
 {
-   public class MedicineService : bingPath, IService<Medicine>
+    public class MedicineService : bingPath, IService<Medicine>
     {
         public MedicineRepository medicineRepository;
         String path = bingPathToAppDir(@"JsonFiles\medicine.json");
@@ -35,25 +36,37 @@ namespace Class_diagram.Service
         {
             medicineRepository.Update(medicine);
         }
-      
-      public void Remove(Medicine medicine)
-      {
+
+        private void deleteIfMedicinesAreEqual(Medicine firstMedicine,Medicine secondMedicine)
+        {
+            if (firstMedicine.ID == secondMedicine.ID)
+            {
+                medicineRepository.Delete(firstMedicine.ID);
+
+            }
+        }
+
+        public void Remove(Medicine medicine)
+        {
             List<Medicine> listOfMedicines = medicineRepository.GetAll();
 
             foreach (Medicine medicineObject in listOfMedicines)
             {
-                if (medicineObject.ID == medicine.ID)
-                {
-                    medicineRepository.Delete(medicine.ID);
-
-                }
+                deleteIfMedicinesAreEqual(medicineObject, medicine);
             }
 
-            removeMedicineFromRoom(medicine);
-           
-        }
+            removeMedicineFromAllRoom(medicine);
 
-        public void removeMedicineFromRoom(Medicine medicine)
+        }
+        private void removeMedicineFromSpecificRoom(Room room, Medicine medicine,RoomController roomController){
+            if (room.medicine.Contains(medicine.Name))
+                {
+                    room.medicine.Remove(medicine.Name);
+                    roomController.Update(room);
+
+                }
+        }
+        public void removeMedicineFromAllRoom(Medicine medicine)
         {
 
             RoomController roomController = new RoomController();
@@ -62,17 +75,17 @@ namespace Class_diagram.Service
 
             foreach (Room room in listOfRooms)
             {
-                if (room.medicine.Contains(medicine.Name))
-                {
-                    room.medicine.Remove(medicine.Name);
-                    roomController.Update(room);
-
-                }
+                removeMedicineFromSpecificRoom(room, medicine, roomController);
             }
 
 
         }
 
+        private bool isNamesOfMedicineEqual(Medicine medicine,string nameOfSecondMedicine)
+        {
+            if (medicine.Name.ToLower().Equals(nameOfSecondMedicine.ToLower())) return true;
+            return false;
+        }
 
         public Boolean isNameValid(String name)
         {
@@ -80,7 +93,7 @@ namespace Class_diagram.Service
 
             foreach (Medicine medicine in listOfMedicines)
             {
-                if (medicine.Name.ToLower().Equals(name.ToLower()))
+                if (isNamesOfMedicineEqual(medicine,name))
                 {
                     return false;
                 }
