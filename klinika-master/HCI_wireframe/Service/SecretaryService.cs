@@ -91,7 +91,7 @@ namespace Class_diagram.Service
             }
         }
 
-        private Boolean areSecreatariesEqualByID(SecrearyUser firstSecretary, SecrearyUser secondSecretary)
+        private Boolean areSecreatariesEqualByID(SecretaryUser firstSecretary, SecretaryUser secondSecretary)
         {
             if(firstSecretary.ID.ToString().Equals(secondSecretary.ID.ToString()))
             {

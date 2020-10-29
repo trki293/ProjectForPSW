@@ -37,9 +37,9 @@ namespace HCI_wireframe.Service
         {
             if (isRoomStorage(room))
             {
-                //dodat update za medicine repo
+                
                 medicine.room.Add(room.TypeOfRoom);
-                medicineRepository.Update(medicine);
+               
 
                 room.medicine.Add(medicine.Name);
                 roomRepository.Update(room);
@@ -64,7 +64,7 @@ namespace HCI_wireframe.Service
     
         public void New(Medicine medicine)
         {
-            addMedicineToStorage(medicine);
+            addMedicineToStorages(medicine);
             medicineRepository.New(medicine);
         }
 
@@ -87,7 +87,7 @@ namespace HCI_wireframe.Service
 
         public Medicine GetByID(int ID)
         {
-            throw new NotImplementedException();
+            return medicineRepository.GetByID(ID);
         }
     }
 }
