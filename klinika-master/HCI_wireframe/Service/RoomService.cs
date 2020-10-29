@@ -32,6 +32,7 @@ namespace Class_diagram.Service
             equipmentRepository = new EquipmentRepository(path3);
         }
 
+        
         public Boolean isNameValid(String name)
         {
             List<Room> listOfRooms = GetAll();
@@ -43,7 +44,7 @@ namespace Class_diagram.Service
                     return false;
                 }
             }
-
+            
             return true;
         }
 
@@ -60,16 +61,41 @@ namespace Class_diagram.Service
       
       public void Remove(Room room)
       {
-            removeRoomFromMedicine(room);
+            removeRoomFromAllMedicines(room);
 
-            removeRoomFromEquipment(room);
+            removeRoomFromAllEquipments(room);
 
-            removeRoomFromSchedule(room);
+            removeRoomFromAllSchedules(room);
             
             roomRepository.Delete(room.ID);
         }
 
-        public void removeRoomFromMedicine(Room room)
+
+        //MEDICINE
+        private Boolean isMedicineInRoom(Medicine medicine, Room room)
+        {
+            
+            if(medicine.room.Contains(room.TypeOfRoom))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private void removeRoomFromMedicine(Medicine medicine, Room room)
+        {
+            if (isMedicineInRoom(medicine, room))
+            {
+                
+                medicine.room.Remove(room.TypeOfRoom);
+                medicineRepository.Update(medicine);
+
+               
+            }
+        }
+
+
+        public void removeRoomFromAllMedicines(Room room)
         {
             List<Medicine> listOfMedicines = new List<Medicine>();
             listOfMedicines = medicineRepository.GetAll();
@@ -77,31 +103,60 @@ namespace Class_diagram.Service
             foreach (Medicine medicine in listOfMedicines)
             {
 
-                if (medicine.room.Contains(room.TypeOfRoom))
-                {
-
-                    medicine.room.Remove(room.TypeOfRoom);
-                    medicineRepository.Update(medicine);
-                }
+                removeRoomFromMedicine(medicine, room);
             }
         }
-      
-        public void removeRoomFromEquipment(Room room)
+
+
+        //EQUIPMENT
+        private Boolean isEquipmentInRoom(Equipment equipment, Room room)
+        {
+
+            if (equipment.room.Contains(room.TypeOfRoom))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private void removeRoomFromEquipment(Equipment equipment, Room room)
+        {
+            if (isEquipmentInRoom(equipment, room))
+            {
+
+                equipment.room.Remove(room.TypeOfRoom);
+                equipmentRepository.Update(equipment);
+
+
+            }
+        }
+
+        public void removeRoomFromAllEquipments(Room room)
         {
             List<Equipment> listOfEquipments = new List<Equipment>();
             listOfEquipments = equipmentRepository.GetAll();
 
             foreach (Equipment equipment in listOfEquipments)
             {
-                if (equipment.room.Contains(room.TypeOfRoom))
-                {
-                    equipment.room.Remove(room.TypeOfRoom);
-                    equipmentRepository.Update(equipment);
-                }
+                removeRoomFromEquipment(equipment, room);
             }
         }
 
-        public void removeRoomFromSchedule(Room room)
+
+        //SCHEDULE
+        private Boolean isScheduleForRoom(Schedule schedule, Room room)
+        {
+
+            if (schedule.soba.Equals(room.TypeOfRoom))
+            {
+                return true;
+            }
+            return false;
+        }
+
+     
+
+        public void removeRoomFromAllSchedules(Room room)
         {
             EmployeesScheduleController employeesScheduleController = new EmployeesScheduleController();
             List<Schedule> listOfSchedules = new List<Schedule>();
@@ -110,8 +165,9 @@ namespace Class_diagram.Service
             foreach (Schedule schedule in listOfSchedules)
             {
 
-                if (schedule.soba.Equals(room.TypeOfRoom))
+                if (isScheduleForRoom(schedule, room))
                 {
+                    //UPDATE?
                     employeesScheduleController.Remove(schedule);
                 }
             }

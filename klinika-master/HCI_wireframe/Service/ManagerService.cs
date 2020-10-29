@@ -20,8 +20,7 @@ namespace Class_diagram.Service
    public class ManagerService : AbstractUserService<ManagerUser>
     {
         public ManagerRepository managerRepository;
-        public const int UPDATE_MANAGER = 0;
-        public const int NEW_MANAGER = 1;
+        
 
         String path = bingPathToAppDir(@"JsonFiles\manager.json");
 

@@ -65,27 +65,53 @@ namespace Class_diagram.Service
             secretaryRepository.Delete(secretary.ID);
         }
 
-        public void removeSecretaryFromSchedule(SecretaryUser secretary)
+
+        private Boolean isScheduleForSecretary(Schedule schedule, SecretaryUser secretaryUser)
+        {
+            if(schedule.employeeFirst.Equals(secretaryUser.FirstName))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private void findAndDeleteScheduleForSecretary(SecretaryUser secretaryUser)
         {
             List<Schedule> listOfSchedule = new List<Schedule>();
             listOfSchedule = employeesScheduleRepository.GetAll();
+
+            foreach (Schedule schedule in listOfSchedule)
+            {
+
+                if (isScheduleForSecretary(schedule, secretaryUser))
+                {
+                    employeesScheduleRepository.Delete(schedule.ID);
+
+                }
+            }
+        }
+
+        private Boolean areSecreatariesEqualByID(SecretaryUser firstSecretary, SecretaryUser secondSecretary)
+        {
+            if(firstSecretary.ID.ToString().Equals(secondSecretary.ID.ToString()))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public void removeSecretaryFromSchedule(SecretaryUser secretary)
+        {
+           
             List<SecretaryUser> listOfSecretaries = secretaryRepository.GetAll();
 
             foreach (SecretaryUser secretaryUser in listOfSecretaries)
             {
 
-                if (secretaryUser.ID.ToString().Equals(secretary.ID.ToString()))
+                if (areSecreatariesEqualByID(secretaryUser, secretary))
                 {
-                    foreach (Schedule schedule in listOfSchedule)
-                    {
 
-                        if (schedule.employeeFirst.Equals(secretaryUser.FirstName))
-                        {
-                            employeesScheduleRepository.Delete(schedule.ID);
-
-                        }
-                    }
-                   
+                    findAndDeleteScheduleForSecretary(secretaryUser);
 
                 }
             }
